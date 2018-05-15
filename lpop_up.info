@@ -1,0 +1,14 @@
+name = Link Pop Up
+description = Open a link in popup using b-popup library.
+core = 7.x
+package = Link Popup
+dependencies[] = libraries
+configure = admin/config/lpop_up/settings
+
+
+; Information added by Drupal.org packaging script on 2018-03-24
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "lpop_up"
+datestamp = "1521886688"
+

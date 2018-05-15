@@ -1,0 +1,37 @@
+/**
+ * Link Popup styles
+ */
+#lpop-up-form .form-item {
+  display: block;
+  float: left;
+  margin: 0 0 10px;
+  padding: 9px 0;
+  width: 45%;
+}
+#popup-load-img {
+  display: none;
+  position: absolute;
+  left: 30%;
+}
+.loading-image {
+  text-align: center;
+}
+.c_area {
+  width: 95%;
+}
+#popup {
+  left: 20px;
+  position: absolute;
+  z-index: 9999;
+  opacity: 1;
+  display: none;
+  background: #fff;
+  width: 97%;
+}
+.button.b-close {
+  cursor: pointer; 
+  float: left;
+  text-align: right;
+  width: 100%;
+}
+

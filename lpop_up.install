@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the user module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function lpop_up_schema() {
+  $schema['link_title'] = array(
+    'description' => 'Stores menu link to add link-popup rel attribute.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => "Menu Link title",
+      ),
+      'link' => array(
+        'type' => 'varchar',
+        'length' => 254,
+        'not null' => FALSE,
+        'default' => '',
+        'description' => "Menu Link Path",
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'id' => array('id'),
+    ),
+  );
+  return $schema;
+}
+

@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * @file
+ * Defines features and functions common to the Link Popup module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function lpop_up_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#lpop_up':
+      $variables = array();
+      $output = theme('lpop_up', array('var_name' => $variables));
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_init()
+ */
+function lpop_up_init() {
+  $library_name = 'lpop_up';
+  $libraries = libraries_get_path($library_name);
+  $lib_path = $libraries . '/jquery.bpopup.min.js';
+  if (file_exists($lib_path)) {
+    drupal_add_js(libraries_get_path('lpop_up') . '/jquery.bpopup.min.js', array());
+    drupal_add_css(drupal_get_path('module', 'lpop_up') . '/css/lpop_up.css');
+    drupal_add_js(drupal_get_path('module', 'lpop_up') . '/js/lpop_up.js');
+    drupal_add_js(array('lpop_up' => array('lpop_upPath' => drupal_get_path('module', 'lpop_up'))), 'setting');
+    return TRUE;
+  }
+  else {
+    $value = t('Link Pop Up module requires bPopup Library, which is missing. Download and extract the entire contents/files from %url into the %path directory on your server like %required_path.', array('%url' => 'http://dinbror.dk/bpopup/ or https://github.com/dinbror/bpopup', '%path' => 'sites/all/libraries/lpop_up', '%required_path' => 'sites/all/libraries/lpop_up/jquery.bpopup.min.js'));
+    return drupal_set_message($value, 'error');
+  }
+}
+
+/**
+ * Implements hook_menu()
+ * @return items
+ */
+function lpop_up_menu() {
+  $file_path = drupal_get_path('module', 'lpop_up');
+  $items['admin/config/lpop_up/settings'] = array(
+    'title' => 'Link Popup Configure',
+    'description' => 'Configuration for Link Popup',
+    'page callback' => 'menu_links',
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+    'file path' => $file_path,
+    'file' => 'includes/admin.inc',
+  );
+  $items['lpop_up'] = array(
+    'title' => 'Animated Pop Up Display',
+    'description' => 'Animated Pop Up Display',
+    'page callback' => 'lpop_up',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['lpop_up_display'] = array(
+    'title' => 'Animated Pop Up Display',
+    'description' => 'Animated Pop Up Display',
+    'page callback' => 'lpop_up_display',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Callback function lpop_up()
+ * to dispaly link popup examples.
+ * @return output
+ */
+function lpop_up() {
+  $variables = array();
+  $output = theme('lpop_up', array('var_name' => $variables));
+  return $output;
+}
+
+/**
+ * Callback function lpop_up_display()
+ * to display contant on example links
+ * @return output
+ */
+function lpop_up_display() {
+  $output = '<div class="popup_content"><p>Link data is displayed in popup using bPopup library.</p></div>';
+  print $output;
+}
+
+/**
+ * Implements hook_theme
+ */
+function lpop_up_theme($existing, $type, $theme, $path) {
+  return array(
+    'lpop_up' => array(
+      'variables' => array('var_name' => NULL),
+      'template' => 'template/lpop_up', // do not include .tpl.php
+    ),
+  );
+  return $theme;
+}
+
+/**
+ * Implements hook_menu_link_alter
+ */
+function lpop_up_menu_link_alter(&$item) {
+  $query = db_select('link_title', 'lt');
+  $result = $query
+    ->fields('lt', array('id', 'title', 'link'))
+    ->execute();
+  foreach ($result as $row) {
+    if ($item['link_path'] == $row->link) {
+      $item['options']['attributes']['rel'] = 'link-popup';
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_menu_link
+ */
+function lpop_up_preprocess_menu_link(&$variables) {
+  $query = db_select('link_title', 'lt');
+  $result = $query
+    ->fields('lt', array('id', 'title', 'link'))
+    ->execute();
+  foreach ($result as $row) {
+    if ($variables['element']['#href'] == $row->link) {
+      $variables['element']['#localized_options']['attributes']['rel'] = 'link-popup';
+      $variables['element']['#attributes']['rel'] = 'link-popup';
+    }
+  }
+}
+
